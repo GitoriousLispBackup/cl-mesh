@@ -35,23 +35,25 @@
 ;; Triangle
 ;;
 
-(defclass explicit-triangle ()
-  ((normal
-    :initarg :normal
-    :accessor explicit-triangle-normal)
-   (vertices
-    :initarg :vertices
-    :accessor explicit-triangle-vertices)))
-
 (defclass triangle ()
   ((normal
     :initarg :normal
-    :initform '()
+    :type lm:vector
+    :accessor normal)
+   (vertices
+    :initarg :vertices
+    :type list
+    :accessor vertices)))
+
+(defclass index-triangle ()
+  ((normal
+    :initarg :normal
+    ;; :initform '()
     :type lm:vector
     :accessor normal)
    (vertex-ids
     :initarg :vertex-ids
-    :initform '()
+    ;; :initform '()
     :type list
     :accessor vertex-ids))
   (:documentation "A triangle with a normal vector and a list of 3
@@ -67,6 +69,7 @@
     :accessor vertices)
    (triangles
     :initarg :triangles
+    :type vector
     :accessor triangles)))
 
 (defun sort-triangles-z (mesh)
@@ -80,21 +83,30 @@ ascending minimal z values"
 
 (sb-ext:define-hash-table-test lm:vector= vector-hash)
 
-(defmethod vertex (idx (triangle triangle) mesh)
+(defmethod vertex (idx (triangle index-triangle) mesh)
   "The vertex of number idx in a mesh"
-  (nth
-   (nth idx (vertex-ids triangle))
-   (vertices mesh)))
+  (elt
+   (vertices mesh)
+   (elt (vertex-ids triangle) idx)))
 
-(defmethod sort-vertices-z ((triangle triangle) mesh)
+(defmethod vertex (idx (triangle triangle) mesh)
+  (elt (vertices triangle) idx))
+
+(defmethod sort-vertices-z ((triangle index-triangle) mesh)
   "Sort the vertices of a triangle in a mesh in the order of ascending
 z values "
   (setf (vertex-ids triangle)
 	(sort (vertex-ids triangle)
 	      (lambda (id1 id2)
-		(cl-mesh:vector-z-compare 
-		 (nth id1 (vertices mesh))
-		 (nth id2 (vertices mesh)))))))
+		(cl-mesh:vector-z-compare
+		 (elt (vertices mesh) id1)
+		 (elt (vertices mesh) id2))))))
+
+(defmethod sort-vertices-z ((triangle triangle) mesh)
+  (setf (vertices triangle)
+	(sort (vertices triangle)
+	      (lambda (v1 v2)
+		(< (lm:z v1) (lm:z v2))))))
 
 (defun strip-redundant-vertices (triangle-list)
   "Returns a mesh made from a list of explicite triangles"
