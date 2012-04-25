@@ -30,6 +30,12 @@
            #:vertex
            #:mesh
            #:normal
+	   #:x-min
+	   #:x-max
+	   #:y-min
+	   #:y-max
+	   #:z-min
+	   #:z-max
            #:strip-redundant-vertices
 	   #:sort-vertices-z
 	   #:sort-triangles-z))

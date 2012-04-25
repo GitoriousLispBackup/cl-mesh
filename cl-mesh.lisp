@@ -70,7 +70,25 @@
    (triangles
     :initarg :triangles
     :type vector
-    :accessor triangles)))
+    :accessor triangles)
+   (x-max
+    :initarg :x-max
+    :accessor x-max)
+   (x-min
+    :initarg :x-min
+    :accessor x-min)
+   (y-max
+    :initarg :y-max
+    :accessor y-max)
+   (y-min
+    :initarg :y-min
+    :accessor y-min)
+   (z-max
+    :initarg :z-max
+    :accessor z-max)
+   (z-min
+    :initarg :z-min
+    :accessor z-min)))
 
 (defun sort-triangles-z (mesh)
   "Sort the triangles of a mesh destructively in the order of
